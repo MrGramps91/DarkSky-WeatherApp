@@ -1,0 +1,123 @@
+//powered by Dark Sky
+
+package com.Sevens17.DarkSky_WeatherApp;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import static spark.Spark.*;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+public class WeatherApp {
+	/*private double latitude;
+	private double longitude;
+	private String timezone;*/
+	private Currently currently;
+	
+	public WeatherApp(Currently currently){
+		this.currently = currently;
+	}
+	
+	public Currently getCurrently(){
+		return currently;
+	}
+	
+	public void setCurrently(Currently currently){
+		this.currently = currently;
+	}
+	
+	public static void main(String[]args){
+		try{
+		WeatherApp.call_me();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public static void call_me()throws Exception{
+		URL url = new URL("https://api.darksky.net/forecast/[insert api key]/[insert lat/long coordinates]");
+		HttpURLConnection con = (HttpURLConnection) url.openConnection();
+		con.setRequestMethod("GET");
+		con.setRequestProperty("User-Agent", "Mozilla/5.0");
+		int responseCode = con.getResponseCode();
+		System.out.println("Get Response code :: " + responseCode);
+			if(responseCode == HttpURLConnection.HTTP_OK){
+				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+					String inputLine;
+					StringBuffer response = new StringBuffer();
+					while((inputLine = in.readLine()) != null){
+						response.append(inputLine);
+					}
+					in.close();
+					
+					System.out.println(response.toString());
+			} else{
+					System.out.println("GET request not found");
+			}	
+	}	
+
+}
+
+class Currently{
+	
+	private String summary;
+	private double temperature;
+	private double humidity;
+	private int uvIndex;
+	
+	public Currently(String summary,double temperature,double humidity, int uvINdex){
+		
+		this.summary = summary;
+		this.temperature = temperature;
+		this.humidity = humidity;
+		this.uvIndex = uvIndex;
+		
+	}
+	
+	public String getSummary(){
+		return summary;
+	}
+	
+	public void setSummary(String summary){
+		this.summary = summary;
+	}
+	
+	public double getTemperature(){
+		return temperature;
+	}
+	
+	public void setTemperature(double temperature){
+		this.temperature = temperature;
+	}
+	
+	public double getHumidity(){
+		return humidity;
+	}
+	
+	public void setHumidity(double humidity){
+		this.humidity = humidity;
+	}
+	
+	public int getUvIndex(){
+		return uvIndex;
+	}
+	
+	public void setUvIndex(int uvIndex){
+		this.uvIndex = uvIndex;
+	}
+	
+	public String toString(){
+		StringBuilder sb = new StringBuilder();
+			sb.append("Summary="+getSummary()+"\n");
+			sb.append("Temperature="+getTemperature()+"\n");
+			sb.append("Humidity="+getHumidity()+"\n");
+			sb.append("uvIndex="+getUvIndex()+"\n");
+		return sb.toString();
+	}
+}
